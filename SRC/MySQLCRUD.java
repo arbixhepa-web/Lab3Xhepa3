@@ -10,6 +10,21 @@ public class MySQLCRUD {
         return DriverManager.getConnection(url, user, pass);
     }
 
+    // RESET TABLE (IMPORTANT)
+    public void reset() {
+        String sql = "DELETE FROM customer";
+
+        try (Connection conn = connect();
+             Statement st = conn.createStatement()) {
+
+            st.executeUpdate(sql);
+            System.out.println("MySQL RESET DONE");
+
+        } catch (SQLException e) {
+            System.out.println("MySQL RESET ERROR: " + e.getMessage());
+        }
+    }
+
     // CREATE
     public void create(Customer c) {
         String sql = "INSERT INTO customer (id, firstName, lastName, email, phone) VALUES (?, ?, ?, ?, ?)";
@@ -24,10 +39,10 @@ public class MySQLCRUD {
             ps.setString(5, c.getPhone());
 
             ps.executeUpdate();
-            System.out.println("MySQL Inserted: " + c.getId());
+            System.out.println("MySQL INSERTED: " + c.getId());
 
         } catch (SQLException e) {
-            System.out.println("MySQL Insert Error: " + e.getMessage());
+            System.out.println("MySQL INSERT ERROR: " + e.getMessage());
         }
     }
 
@@ -39,7 +54,7 @@ public class MySQLCRUD {
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
-            System.out.println("\n--- MySQL Data ---");
+            System.out.println("\n--- MySQL DATA ---");
 
             while (rs.next()) {
                 System.out.println(
@@ -52,7 +67,7 @@ public class MySQLCRUD {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("MySQL READ ERROR: " + e.getMessage());
         }
     }
 
@@ -67,10 +82,10 @@ public class MySQLCRUD {
             ps.setInt(2, c.getId());
 
             ps.executeUpdate();
-            System.out.println("MySQL Updated: " + c.getId());
+            System.out.println("MySQL UPDATED: " + c.getId());
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("MySQL UPDATE ERROR: " + e.getMessage());
         }
     }
 
@@ -84,25 +99,15 @@ public class MySQLCRUD {
             ps.setInt(1, id);
 
             ps.executeUpdate();
-            System.out.println("MySQL Deleted: " + id);
+            System.out.println("MySQL DELETED: " + id);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("MySQL DELETE ERROR: " + e.getMessage());
         }
     }
 
-    // DELETE ALL (IMPORTANT FOR TESTING)
+    // DELETE ALL (alias)
     public void deleteAll() {
-        String sql = "DELETE FROM customer";
-
-        try (Connection conn = connect();
-             Statement st = conn.createStatement()) {
-
-            st.executeUpdate(sql);
-            System.out.println("MySQL Table Cleared");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        reset();
     }
 }
